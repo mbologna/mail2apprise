@@ -36,3 +36,9 @@ The single argument is the Apprise notify URL, including the tag.
 uv run pytest
 uv run ruff check . && uv run ruff format --check .
 ```
+
+Development dependencies resolve only releases at least 7 days old
+(`exclude-newer` in `pyproject.toml`). A CVE fix released less than 7 days
+ago needs a temporary override, for example
+`exclude-newer-package = { pytest = false }` under `[tool.uv]`, removed
+once the release is a week old.
