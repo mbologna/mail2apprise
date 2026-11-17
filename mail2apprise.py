@@ -38,7 +38,14 @@ def to_notification(raw):
     if msg.get("Date"):
         header.append(f"Date: {msg['Date']}")
     body = "\n".join(header) + "\n\n" + (plain_text(msg) or "(empty body)")
-    return {"title": str(msg.get("Subject", "(no subject)")), "body": body[:MAX_BODY]}
+    # format=text makes Apprise escape the text for HTML targets: Telegram
+    # rejects a raw "<root@host>" (cron subjects, From headers) as an unknown
+    # tag, and the notification fails.
+    return {
+        "title": str(msg.get("Subject", "(no subject)")),
+        "body": body[:MAX_BODY],
+        "format": "text",
+    }
 
 
 def post(url, notification, timeout=10):

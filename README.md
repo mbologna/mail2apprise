@@ -9,7 +9,9 @@ server. One Python file, standard library only.
 
 The notification's title is the mail's subject. Its body starts with the
 sender and date, followed by the plain-text part of the mail, truncated to
-2000 characters. If Apprise can't be reached, the script exits 75
+2000 characters. Both go out as plain text (`format: text`), so Apprise
+escapes them for HTML targets such as Telegram, which would otherwise reject a
+`<root@host>` in a cron subject. If Apprise can't be reached, the script exits 75
 (`EX_TEMPFAIL`). Postfix then defers the mail and retries it later, so
 nothing bounces or gets lost.
 
