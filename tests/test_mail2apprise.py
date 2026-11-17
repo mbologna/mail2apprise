@@ -36,6 +36,7 @@ plain caf=C3=A9
 def test_plain_message():
     n = m.to_notification(PLAIN)
     assert n["title"] == "Cron <root@host> backup"
+    assert n["format"] == "text"
     assert n["body"] == "From: cron@host\nDate: Sun, 18 Oct 2026 03:00:00 +0200\n\nrestic exited 1"
 
 
