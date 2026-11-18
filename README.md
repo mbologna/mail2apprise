@@ -13,7 +13,7 @@ sender and date, followed by the plain-text part of the mail, truncated to
 escapes them for HTML targets such as Telegram, which would otherwise reject a
 `<root@host>` in a cron subject. If Apprise can't be reached, the script exits 75
 (`EX_TEMPFAIL`). Postfix then defers the mail and retries it later, so
-nothing bounces or gets lost.
+nothing is lost.
 
 ## Install
 
@@ -30,7 +30,23 @@ root: sysalert
 sysalert: "|/usr/local/sbin/mail2apprise.py http://apprise:8000/notify/system-alerts"
 ```
 
-The single argument is the Apprise notify URL, including the tag.
+The argument is the Apprise notify URL, including the config key. An optional
+`--tag TAG` before it sends Apprise's `tag` field, to pick a tagged URL inside
+that config; an empty `TAG` sends none.
+
+If Apprise answers with a client error (a `404` for a config key that doesn't
+exist), the script exits 67 (`EX_NOUSER`) and Postfix bounces the mail at once:
+retrying can't help. Server errors and an unreachable Apprise exit 75 and the
+mail waits in the queue.
+
+A Postfix pipe can route by recipient: with a transport for a dedicated domain,
+`<key>+<tag>@notify.example` becomes the key and the tag (`${user}` and
+`${extension}` in `master.cf`):
+
+```
+apprise   unix  -       n       n       -       -       pipe
+  flags=Rq user=nobody argv=/usr/local/sbin/mail2apprise.py --tag ${extension} http://apprise:8000/notify/${user}
+```
 
 ## Development
 
