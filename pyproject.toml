@@ -1,6 +1,6 @@
 [project]
 name = "mail2apprise"
-version = "1.0.0"
+version = "0.0.0"
 description = "Postfix pipe transport that turns a mail into an Apprise notification"
 readme = "README.md"
 license = "MIT"

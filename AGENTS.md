@@ -12,5 +12,6 @@ Plain SemVer: `vX.Y.Z` tags, each a GitHub Release from which users install
   a release: auto-release tags from the commit types (`feat` minor; `fix`,
   `perf`, `revert` patch; `!` or a `BREAKING CHANGE:` footer major).
 - Write Conventional Commit subjects; they decide the next version.
-- `version` in `pyproject.toml` is not the release version: the project is
-  not packaged (`package = false`) and nothing reads it. Leave it alone.
+- `version` in `pyproject.toml` is a placeholder and stays `0.0.0`: the
+  project is not packaged (`package = false`) and nothing reads it. Tags are
+  the version.
