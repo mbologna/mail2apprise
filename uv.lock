@@ -307,7 +307,7 @@ wheels = [
 
 [[package]]
 name = "mail2apprise"
-version = "1.0.0"
+version = "0.0.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]

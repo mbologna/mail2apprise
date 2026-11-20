@@ -19,11 +19,13 @@ nothing is lost.
 
 ```sh
 curl -fsSLo /usr/local/sbin/mail2apprise.py \
-  https://raw.githubusercontent.com/mbologna/mail2apprise/v1.0.0/mail2apprise.py
+  https://raw.githubusercontent.com/mbologna/mail2apprise/v1.1.0/mail2apprise.py
 chmod 755 /usr/local/sbin/mail2apprise.py
 ```
 
-Then pipe the mail you want into it from `/etc/aliases`, and run `newaliases`:
+Use the newest [release](https://github.com/mbologna/mail2apprise/releases)
+tag in the URL. Then pipe the mail you want into it from `/etc/aliases`, and
+run `newaliases`:
 
 ```
 root: sysalert
@@ -60,3 +62,12 @@ Development dependencies resolve only releases at least 7 days old
 ago needs a temporary override, for example
 `exclude-newer-package = { pytest = false }` under `[tool.uv]`, removed
 once the release is a week old.
+
+## Versioning
+
+Releases follow SemVer: [auto-release](https://github.com/mbologna/auto-release)
+tags `vX.Y.Z` from the Conventional Commit types (`feat` minor; `fix`,
+`perf`, `revert` patch; a breaking change major) and publishes a GitHub
+Release with the notes; nothing is built, so you install the script from the
+tag. See the
+[versioning standard](https://github.com/mbologna/.github/blob/main/VERSIONING.md).
