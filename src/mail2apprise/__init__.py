@@ -61,7 +61,7 @@ def post(url, notification, timeout=10):
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
+    with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310: URL from the admin's alias/master.cf
         resp.read()
 
 
