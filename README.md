@@ -25,13 +25,13 @@ chmod 755 /usr/local/sbin/mail2apprise.py
 ```
 
 Set `TAG` to the newest [release](https://github.com/mbologna/mail2apprise/releases).
-The script lives at `src/mail2apprise/__init__.py` from the first release
-after v1.1.0; up to v1.1.0 it sits at the repository root, as
-`mail2apprise.py`. It is still one self-contained file, so the downloaded
-copy runs on its own with `python3`.
+The script lives at `src/mail2apprise/__init__.py` from v1.1.1; up to
+v1.1.0 it sits at the repository root, as `mail2apprise.py`. It is still
+one self-contained file, so the downloaded copy runs on its own with
+`python3`.
 
-From the first release after v1.1.0 you can instead install a
-`mail2apprise` command with [uv](https://docs.astral.sh/uv/) or
+From v1.1.1 you can instead install a `mail2apprise` command with
+[uv](https://docs.astral.sh/uv/) or
 [pipx](https://pipx.pypa.io/). Postfix runs the pipe as an unprivileged
 user (`nobody` by default), so install it system-wide rather than under
 root's home, and use `/usr/local/bin/mail2apprise` in place of
