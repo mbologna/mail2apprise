@@ -4,8 +4,9 @@ Notes for coding agents working in this repository. [README.md](README.md) cover
 
 ## Versioning
 
-Plain SemVer: `vX.Y.Z` tags, each a GitHub Release from which users install
-`mail2apprise.py` (nothing is built or published), per the
+Plain SemVer: `vX.Y.Z` tags, each a GitHub Release from which users
+download `src/mail2apprise/__init__.py` (nothing is built or published),
+per the
 [versioning standard](https://github.com/mbologna/.github/blob/main/VERSIONING.md).
 
 - Never create, move or delete tags, and never edit a version number to cut
@@ -15,3 +16,11 @@ Plain SemVer: `vX.Y.Z` tags, each a GitHub Release from which users install
 - `version` in `pyproject.toml` is a placeholder and stays `0.0.0`: the
   project is not packaged (`package = false`) and nothing reads it. Tags are
   the version.
+
+## Layout
+
+`src/mail2apprise/__init__.py` is the whole program, and hosts download
+that one file from a release tag and run it with `python3`. Keep it a
+single self-contained file: standard library imports only, no imports
+from sibling modules, and keep the shebang and the
+`if __name__ == "__main__":` entry.

@@ -25,7 +25,7 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = ["src"]
 addopts = "-v --strict-markers"
 
 [tool.coverage.run]

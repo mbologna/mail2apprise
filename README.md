@@ -18,14 +18,20 @@ nothing is lost.
 ## Install
 
 ```sh
+TAG=vX.Y.Z  # the newest release
 curl -fsSLo /usr/local/sbin/mail2apprise.py \
-  https://raw.githubusercontent.com/mbologna/mail2apprise/v1.1.0/mail2apprise.py
+  "https://raw.githubusercontent.com/mbologna/mail2apprise/$TAG/src/mail2apprise/__init__.py"
 chmod 755 /usr/local/sbin/mail2apprise.py
 ```
 
-Use the newest [release](https://github.com/mbologna/mail2apprise/releases)
-tag in the URL. Then pipe the mail you want into it from `/etc/aliases`, and
-run `newaliases`:
+Set `TAG` to the newest [release](https://github.com/mbologna/mail2apprise/releases).
+The script lives at `src/mail2apprise/__init__.py` from the first release
+after v1.1.0; up to v1.1.0 it sits at the repository root, as
+`mail2apprise.py`. It is still one self-contained file, so the downloaded
+copy runs on its own with `python3`.
+
+Then pipe the mail you want into it from `/etc/aliases`, and run
+`newaliases`:
 
 ```
 root: sysalert
