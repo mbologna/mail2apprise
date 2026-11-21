@@ -18,14 +18,34 @@ nothing is lost.
 ## Install
 
 ```sh
+TAG=vX.Y.Z  # the newest release
 curl -fsSLo /usr/local/sbin/mail2apprise.py \
-  https://raw.githubusercontent.com/mbologna/mail2apprise/v1.1.0/mail2apprise.py
+  "https://raw.githubusercontent.com/mbologna/mail2apprise/$TAG/src/mail2apprise/__init__.py"
 chmod 755 /usr/local/sbin/mail2apprise.py
 ```
 
-Use the newest [release](https://github.com/mbologna/mail2apprise/releases)
-tag in the URL. Then pipe the mail you want into it from `/etc/aliases`, and
-run `newaliases`:
+Set `TAG` to the newest [release](https://github.com/mbologna/mail2apprise/releases).
+The script lives at `src/mail2apprise/__init__.py` from the first release
+after v1.1.0; up to v1.1.0 it sits at the repository root, as
+`mail2apprise.py`. It is still one self-contained file, so the downloaded
+copy runs on its own with `python3`.
+
+From the first release after v1.1.0 you can instead install a
+`mail2apprise` command with [uv](https://docs.astral.sh/uv/) or
+[pipx](https://pipx.pypa.io/). Postfix runs the pipe as an unprivileged
+user (`nobody` by default), so install it system-wide rather than under
+root's home, and use `/usr/local/bin/mail2apprise` in place of
+`/usr/local/sbin/mail2apprise.py` below:
+
+```sh
+sudo UV_TOOL_DIR=/opt/uv-tools UV_TOOL_BIN_DIR=/usr/local/bin \
+  uv tool install --python /usr/bin/python3 "git+https://github.com/mbologna/mail2apprise@$TAG"
+# or, with pipx 1.5 or later:
+sudo pipx install --global "git+https://github.com/mbologna/mail2apprise@$TAG"
+```
+
+Then pipe the mail you want into it from `/etc/aliases`, and run
+`newaliases`:
 
 ```
 root: sysalert
@@ -53,9 +73,13 @@ apprise   unix  -       n       n       -       -       pipe
 ## Development
 
 ```sh
-uv run pytest
+uv run pytest --cov
 uv run ruff check . && uv run ruff format --check .
+uv run pre-commit run --all-files
 ```
+
+The skeleton (CI, pre-commit, `pyproject.toml` tooling) comes from
+[python-app-template](https://github.com/mbologna/python-app-template).
 
 Development dependencies resolve only releases at least 7 days old
 (`exclude-newer` in `pyproject.toml`). A CVE fix released less than 7 days
@@ -68,6 +92,6 @@ once the release is a week old.
 Releases follow SemVer: [auto-release](https://github.com/mbologna/auto-release)
 tags `vX.Y.Z` from the Conventional Commit types (`feat` minor; `fix`,
 `perf`, `revert` patch; a breaking change major) and publishes a GitHub
-Release with the notes; nothing is built, so you install the script from the
-tag. See the
+Release with the notes; nothing is built, so you download the script or
+install the command from the tag. See the
 [versioning standard](https://github.com/mbologna/.github/blob/main/VERSIONING.md).
