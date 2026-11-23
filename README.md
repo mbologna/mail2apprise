@@ -87,6 +87,21 @@ ago needs a temporary override, for example
 `exclude-newer-package = { pytest = false }` under `[tool.uv]`, removed
 once the release is a week old.
 
+## Why not an existing tool
+
+- [mailrise](https://github.com/YoRyan/mailrise) is an SMTP server that sends
+  each mail to Apprise. It has had no release since July 2023, and it has one
+  main maintainer.
+- The [`apprise` CLI](https://github.com/caronc/apprise) sends a title and a
+  body given on its command line. It can't read an email (the Subject as the
+  title, the text/plain part decoded with its charset), and it exits 1 for
+  every failure, so a mail server can't tell whether to defer or bounce.
+- [ntfy](https://ntfy.sh/) can publish the emails it receives, but to ntfy
+  topics, not to Apprise.
+
+Checked 2026-11-23. A planned upstream pull request would add email input to
+the `apprise` CLI: [#26](https://github.com/mbologna/mail2apprise/issues/26).
+
 ## Versioning
 
 Releases follow SemVer: [auto-release](https://github.com/mbologna/auto-release)
