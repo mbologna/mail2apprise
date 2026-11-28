@@ -12,6 +12,8 @@ User-facing docs: [README.md](README.md).
   sibling modules, and keep the shebang and the
   `if __name__ == "__main__":` entry. `dependencies` stays empty.
 - `tests/`: pytest. Keep I/O out of the logic so it tests without mocks.
+- `Dockerfile`: the image of `mail2apprise serve` (the SMTP sink): the
+  one file on the official Python image, uid 65534, port 2525.
 
 ## Conventions
 
@@ -34,9 +36,9 @@ User-facing docs: [README.md](README.md).
 Plain SemVer, per the
 [versioning standard](https://github.com/mbologna/.github/blob/main/VERSIONING.md):
 `vX.Y.Z` tags with a GitHub Release each, a changelog of the commit
-subjects. A tag builds nothing: users download
-`src/mail2apprise/__init__.py` at the tag, or install the console script
-from the repository.
+subjects. Each tag builds the image `ghcr.io/mbologna/mail2apprise` as
+`X.Y.Z`, `X.Y` and `latest`; hosts download `src/mail2apprise/__init__.py`
+at the tag, or install the console script from the repository.
 
 - Never create, move or delete tags, and never edit a version number to cut
   a release: auto-release tags from the commit types (`feat` minor; `fix`,

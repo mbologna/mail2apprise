@@ -3,6 +3,7 @@ name: CI
 "on":
   push:
     branches: [main]
+    tags: ["v*.*.*"]
   pull_request:
   schedule:
     - cron: "0 6 * * 1"
@@ -27,17 +28,41 @@ jobs:
       enable_codecov: false
     secrets: inherit
 
+  docker:
+    needs: python
+    # Build, push, sign and scan the serve image; the auto-release job below releases.
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      security-events: write
+    uses: mbologna/.github/.github/workflows/docker-ci.yml@ea61923970085662e217bf6e40c26d98185a0b42 # main
+    with:
+      image_name: mail2apprise
+      # Only release tags publish the image (auto-release dispatches
+      # their build); pull requests build it without pushing.
+      publish: release
+      # Without network or configuration: the file must import, and serve
+      # must refuse to start without MAIL2APPRISE_URLS (exit 64).
+      smoke_cmd: 'python3 /usr/local/bin/mail2apprise serve; test $? -eq 64'
+    secrets: inherit
+
   # Releases: Monday's schedule tags vX.Y.Z with a GitHub Release of the
   # commit subjects when a feat, fix, perf, revert or breaking commit
   # landed (or a maintenance release for dependency updates), and a push to
-  # main tags only a fix(security) commit. A tag builds nothing.
+  # main tags only a fix(security) commit. The tag build publishes the
+  # X.Y.Z image; the script itself is downloaded from the tag.
   auto-release:
-    needs: [python]
-    # contents: push the tag and create the Release.
+    needs: [python, docker]
+    # contents: push the tag and create the Release; actions: dispatch the tag
+    # build (a tag pushed with GITHUB_TOKEN triggers no run).
     permissions:
       contents: write
+      actions: write
     uses: mbologna/.github/.github/workflows/auto-release.yml@ea61923970085662e217bf6e40c26d98185a0b42 # main
     with:
       strategy: conventional
-      dispatch_tag_build: false
+      image: ghcr.io/mbologna/mail2apprise
+      dockerfiles: Dockerfile
     secrets: inherit
