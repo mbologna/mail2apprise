@@ -4,7 +4,7 @@ name = "mail2apprise"
 # auto-release creates, with a GitHub Release of the commit subjects; it
 # builds nothing. Nothing reads this field at run time.
 version = "0.0.0"
-description = "Postfix pipe transport that turns a mail into an Apprise notification"
+description = "SMTP sink and Postfix pipe transport that turns a mail into an Apprise notification"
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Michele Bologna" }]
@@ -77,5 +77,5 @@ source = ["mail2apprise"]
 [tool.coverage.report]
 # CI fails below this total (python-ci and ci-templates' python-test read
 # it). Raise it with the tests; don't lower it to merge.
-fail_under = 96
+fail_under = 98
 show_missing = true

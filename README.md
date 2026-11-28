@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/mbologna/mail2apprise/actions/workflows/ci.yml/badge.svg)](https://github.com/mbologna/mail2apprise/actions/workflows/ci.yml)
 
-A [Postfix](https://www.postfix.org/) pipe transport that turns local system
+A [Postfix](https://www.postfix.org/) pipe transport, and an SMTP sink, that turn local system
 mail (cron output, `unattended-upgrades` reports, smartd warnings) into a push
 notification through an [Apprise API](https://github.com/caronc/apprise-api)
 server. One Python file, standard library only.
@@ -70,6 +70,46 @@ apprise   unix  -       n       n       -       -       pipe
   flags=Rq user=nobody argv=/usr/local/sbin/mail2apprise.py --tag ${extension} http://apprise:8000/notify/${user}
 ```
 
+## SMTP sink: `mail2apprise serve`
+
+The same conversion as an SMTP server, for a mail sink that other hosts
+relay to (Postfix `relayhost`), without Postfix on the sink. It routes like
+the `master.cf` transport above: `<key>[+<tag>]@MAIL2APPRISE_DOMAIN` goes to
+`/notify/<key>` with that tag, a local part in that domain that can't be a
+key is refused at `RCPT` (550), and every other recipient goes to the
+catch-all key. Each Apprise base URL is tried in order. A client error (no
+such config key) answers 550, so the sending host bounces the mail; every
+URL failing answers 451, so it keeps the mail and retries. One reply covers
+the whole mail: with several targets, one deferred defers it all, and the
+ones already delivered may arrive twice on the retry.
+
+| Variable | Default | |
+|---|---|---|
+| `MAIL2APPRISE_URLS` | (required) | Apprise API base URLs, space-separated, tried in order (`http://apprise:8000 http://apprise-2:8000`) |
+| `MAIL2APPRISE_DOMAIN` | empty (no routing) | The pseudo-domain whose local parts are config keys |
+| `MAIL2APPRISE_CATCHALL_KEY` | `system-alerts` | Config key for every other recipient |
+| `MAIL2APPRISE_CATCHALL_TAG` | empty | Its tag |
+| `MAIL2APPRISE_LISTEN` | `0.0.0.0` | Listen address |
+| `MAIL2APPRISE_PORT` | `2525` | Listen port (unprivileged; map 25 to it) |
+| `MAIL2APPRISE_MAX_SIZE` | `1048576` | Largest mail accepted, in bytes (552 above) |
+| `MAIL2APPRISE_HOSTNAME` | `mail2apprise` | Name in the greeting |
+
+It speaks the plain SMTP a relaying MTA uses (`EHLO`, `MAIL`, `RCPT`,
+`DATA`, `RSET`, `NOOP`, `QUIT`): no TLS, no authentication, and it relays
+nothing anywhere but Apprise. Expose it only on a private network (a
+tailnet, a cluster), never to the internet.
+
+The image `ghcr.io/mbologna/mail2apprise` (linux/amd64 and linux/arm64,
+tagged `X.Y.Z`, `X.Y` and `latest` for each release) runs `serve` as uid
+65534 on port 2525 and works with a read-only root filesystem:
+
+```sh
+docker run -p 25:2525 -e MAIL2APPRISE_URLS=http://apprise:8000 \
+  -e MAIL2APPRISE_DOMAIN=notify.example ghcr.io/mbologna/mail2apprise:X.Y.Z
+```
+
+A TCP check on the port is a sufficient readiness and liveness probe.
+
 ## Development
 
 ```sh
@@ -107,6 +147,6 @@ the `apprise` CLI: [#26](https://github.com/mbologna/mail2apprise/issues/26).
 Releases follow SemVer: [auto-release](https://github.com/mbologna/auto-release)
 tags `vX.Y.Z` from the Conventional Commit types (`feat` minor; `fix`,
 `perf`, `revert` patch; a breaking change major) and publishes a GitHub
-Release with the notes; nothing is built, so you download the script or
-install the command from the tag. See the
+Release with the notes, and the tag builds the `serve` image; the script
+itself you download or install from the tag. See the
 [versioning standard](https://github.com/mbologna/.github/blob/main/VERSIONING.md).
